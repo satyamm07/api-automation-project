@@ -1,7 +1,9 @@
-.idea
+.idea/
 .class
-.gradle
+.gradle/
 gradlew
 settings.gradle
-gradle
+gradle/
 gradlew.bat
+build/
+out/
