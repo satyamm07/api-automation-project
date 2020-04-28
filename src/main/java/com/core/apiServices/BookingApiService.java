@@ -18,7 +18,8 @@ public class BookingApiService extends BaseClass {
     }
 
     public Response createBookingService(String request, String payload) throws Exception {
-//        System.out.println(configProperties.getProperty("baseUrl") + request, payload);
+        BASE_LOGGER.info("Create Booking API endpoint: "
+                + (configProperties.getProperty("baseUrl") + request));
         Response createBookingResponse = apiUtils
                 .postRequest(configProperties.getProperty("baseUrl") + request, payload);
         if (createBookingResponse != null) {
@@ -29,7 +30,7 @@ public class BookingApiService extends BaseClass {
     }
 
     public Response getBookingDetailsWithIdService(String request) throws Exception {
-        BASE_LOGGER.error("Get booking details API endpoint"
+        BASE_LOGGER.info("Get booking details API endpoint: "
                 + configProperties.getProperty("baseUrl") + request);
         Response getBookingDetailsWithIdResponse = apiUtils
                 .getRequest(configProperties.getProperty("baseUrl") + request);

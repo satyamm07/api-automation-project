@@ -8,6 +8,7 @@ import com.core.utils.BaseClass;
 import com.core.utils.IEndPoints;
 import com.google.gson.GsonBuilder;
 import io.restassured.response.Response;
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.testng.annotations.Test;
 import com.google.gson.Gson;
@@ -19,11 +20,11 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
 
     private final Logger BASE_LOGGER = Logger.getLogger(BookingApiTest.class);
     private Gson gson;
-    BookingApiService bookingApiService;
-    Response getBookingDetailsResponse;
-    CreateBookingJsonCreation createBookingJsonCreation;
-    BookingDatesJsonCreation bookingDatesJsonCreation;
-    Response createBookingResponse;
+    private BookingApiService bookingApiService;
+    private Response getBookingDetailsResponse;
+    private CreateBookingJsonCreation createBookingJsonCreation;
+    private BookingDatesJsonCreation bookingDatesJsonCreation;
+    private Response createBookingResponse;
 
     private final String firstName = "Satyam";
     private final String lastName = "Mishra";
@@ -33,8 +34,15 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
     private final String checkInDate = "2020-04-28";
     private final String checkOutDate = "2020-04-28";
     private final String additionalNeeds = "Breakfast";
+    private final String unregisteredFirstName = "TestUSer";
+    private final String invalidBookingId = "77abc$%!";
+    private final String notFoundMessage = "Not Found";
 
     private int jsonBookingId;
+
+    public BookingApiTest() {
+        BasicConfigurator.configure();
+    }
 
     @Test(description = "To verify, Create Booking API response", priority = 0)
     public void testCreateBooking() throws Exception{
@@ -57,7 +65,7 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
                 "Status code is not matching");
         BASE_LOGGER.info("Verified the status code from the response and it is: "
                 + createBookingResponse.statusCode());
-        System.out.println(createBookingResponse.asString());
+        BASE_LOGGER.info("The generated response is: " + createBookingResponse.asString());
 
         softAssert.assertAll();
     }
@@ -90,7 +98,6 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
                 "Created additional needs is not matching");
 
         softAssert.assertAll();
-
     }
 
     @Test(description = "To verify, Get Booking details with Id API response", priority = 2)
@@ -100,7 +107,7 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
         String bookingId = "/" + jsonBookingId;
         getBookingDetailsResponse = bookingApiService
                 .getBookingDetailsWithIdService(BOOKING_API + bookingId);
-        System.out.println(getBookingDetailsResponse.asString());
+        BASE_LOGGER.info("The generated response is: " + getBookingDetailsResponse.asString());
 
         softAssert.assertEquals(getBookingDetailsResponse.statusCode(), 200,
                 "Status code is not matching");
@@ -150,7 +157,7 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
         String apiParameters = "?firstname=" + firstName + "&lastname=" + lastName;
         getBookingDetailsResponse = bookingApiService
                 .getBookingDetailsWithIdService(BOOKING_API + apiParameters);
-        System.out.println(getBookingDetailsResponse.asString());
+        BASE_LOGGER.info("The generated response is: " + getBookingDetailsResponse.asString());
 
         softAssert.assertEquals(getBookingDetailsResponse.statusCode(), 200,
                 "Status code is not matching");
@@ -192,5 +199,45 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
         softAssert.assertAll();
     }
 
+    @Test(description = "To verify the status response of the create booking api after not passing " +
+            "the request body", priority = 7)
+    public void testStatusResponseOfCreateBookingApi() throws Exception{
+        bookingApiService = new BookingApiService();
+        softAssert = new SoftAssert();
+        createBookingResponse = bookingApiService.createBookingService(BOOKING_API, "");
+        softAssert.assertEquals(createBookingResponse.statusCode(), 500,
+                "Status code is not matching");
+        softAssert.assertAll();
+    }
 
+    @Test(description = "To verify the response of the get bookings api after passing " +
+            "the unregistered booking details", priority = 8)
+    public void testStatusResponseOfGetBookingsApi() throws Exception{
+        bookingApiService = new BookingApiService();
+        softAssert = new SoftAssert();
+
+        String apiParameters = "?firstname=" + unregisteredFirstName + "&lastname=" + lastName;
+        getBookingDetailsResponse = bookingApiService.getBookingDetailsWithIdService(BOOKING_API + apiParameters);
+        softAssert.assertEquals(getBookingDetailsResponse.statusCode(), 200,
+                "Status code is not matching");
+        softAssert.assertEquals("[]","[]", "Response is not matching");
+
+        softAssert.assertAll();
+    }
+
+    @Test(description = "To verify the response of the get bookings api after passing the booking ID"
+            , priority = 9)
+    public void testStatusResponseOfGetBookingsWithInvalidIdApi() throws Exception{
+        bookingApiService = new BookingApiService();
+        softAssert = new SoftAssert();
+
+        String bookingId = "/" + invalidBookingId;
+        getBookingDetailsResponse = bookingApiService.getBookingDetailsWithIdService(BOOKING_API + bookingId);
+        softAssert.assertEquals(getBookingDetailsResponse.statusCode(), 404,
+                "Status code is not matching");
+        softAssert.assertEquals(getBookingDetailsResponse.asString(), notFoundMessage,
+                "Response is not matching");
+
+        softAssert.assertAll();
+    }
 }

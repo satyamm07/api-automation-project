@@ -12,7 +12,9 @@
                     <include name="testJsonBookingApiResponse"/>
                     <include name="testGetBookingApiResponseWithNameQueryParam"/>
                     <include name="testBookingApiJsonResponseWithQueryParam"/>
-                    <include name="testGetBookingApiResponseWithDatesQueryParam"/>
+                    <include name="testStatusResponseOfCreateBookingApi"/>
+                    <include name="testStatusResponseOfGetBookingsApi"/>
+                    <include name="testStatusResponseOfGetBookingsWithInvalidIdApi"/>
                 </methods>
             </class>
 
