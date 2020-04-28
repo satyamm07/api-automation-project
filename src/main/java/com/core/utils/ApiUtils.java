@@ -12,7 +12,9 @@ public class ApiUtils {
     private final Logger BASE_LOGGER = Logger.getLogger(ApiUtils.class);
 
     public Response getRequest(String request) {
-        Response response = given().when().get(request);
+        Response response = given()
+                .when()
+                .get(request);
         if (null != response) {
             BASE_LOGGER.info("---Successfully Received the response ---");
         } else {
@@ -22,7 +24,10 @@ public class ApiUtils {
     }
 
     public Response getRequest(String request, String contentType) {
-        Response response = given().contentType(contentType).when().get(request);
+        Response response = given()
+                .contentType(contentType)
+                .when()
+                .get(request);
         if(null != response) {
             BASE_LOGGER.info("---Successfully Received the response ---");
         }
@@ -33,7 +38,10 @@ public class ApiUtils {
     }
 
     public Response postRequest(String request, String payLoad) {
-        Response response = given().contentType("application/json").body(payLoad).post(request);
+        Response response = given()
+                .contentType("application/json")
+                .body(payLoad)
+                .post(request);
         if(null != response) {
             BASE_LOGGER.info("---Successfully Received the response ---");
         }
@@ -44,8 +52,12 @@ public class ApiUtils {
     }
 
     public Response putRequest(String request, String payLoad, String cookie) {
-        Response response = given().contentType("application/json").body(payLoad).cookie(cookie).put(request);
-        if(request != null) {
+        Response response = given()
+                .contentType("application/json")
+                .body(payLoad)
+                .cookie("token", cookie)
+                .put(request);
+        if(null != response) {
             BASE_LOGGER.info("---Successfully Received the response ---");
         }
         else {
@@ -55,8 +67,12 @@ public class ApiUtils {
     }
 
     public Response patchRequest(String request, String payload, String cookie) {
-        Response response = given().contentType("application/json").cookie(cookie).body(request).patch(payload);
-        if(request != null) {
+        Response response = given()
+                .contentType("application/json")
+                .cookie(cookie)
+                .body(request)
+                .patch(payload);
+        if(null != response) {
             BASE_LOGGER.info("---Successfully Received the response ---");
         }
         else {

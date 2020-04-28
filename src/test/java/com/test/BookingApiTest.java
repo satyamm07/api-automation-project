@@ -1,9 +1,10 @@
 package com.test;
 
 import com.core.apiServices.BookingApiService;
-import com.core.apiServices.BookingDatesJsonCreation;
-import com.core.apiServices.CreateBookingJsonCreation;
-import com.core.pojoServices.BookingDates;
+import com.core.pojoServices.BookingDatesJsonCreation;
+import com.core.pojoServices.CreateAuthTokenJsonCreation;
+import com.core.pojoServices.CreateBookingJsonCreation;
+import com.core.pojoServices.pojo.BookingDates;
 import com.core.utils.BaseClass;
 import com.core.utils.IEndPoints;
 import com.google.gson.GsonBuilder;
@@ -25,7 +26,10 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
     private CreateBookingJsonCreation createBookingJsonCreation;
     private BookingDatesJsonCreation bookingDatesJsonCreation;
     private Response createBookingResponse;
+    private Response updateBookingResponse;
+    private Response createTokenResponse;
 
+    //Create Booking Details
     private final String firstName = "Satyam";
     private final String lastName = "Mishra";
     private final int totalPrice = 1100;
@@ -38,7 +42,20 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
     private final String invalidBookingId = "77abc$%!";
     private final String notFoundMessage = "Not Found";
 
+    //Create Auth token details
+    private final String username = "admin";
+    private final String password = "password123";
+
+    //Update Booking Details
+    private final String updatedFirstName = "TestUSer";
+    private final String updatedLastName = "Roger";
+    private final int updatedTotalPrice = 2200;
+    private final String updatedCheckInDate = "2020-04-29";
+    private final String updatedCheckOutDate = "2020-04-20";
+    private final String updatedAdditionalNeeds = "Lunch";
+
     private int jsonBookingId;
+    private String token;
 
     public BookingApiTest() {
         BasicConfigurator.configure();
@@ -238,6 +255,49 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
         softAssert.assertEquals(getBookingDetailsResponse.asString(), notFoundMessage,
                 "Response is not matching");
 
+        softAssert.assertAll();
+    }
+
+    @Test(description = "To verify auth token is creating", priority = 10)
+    public void testCreateTokenApi() throws Exception {
+        bookingApiService = new BookingApiService();
+        softAssert = new SoftAssert();
+        gson = new GsonBuilder().setPrettyPrinting().create();
+        CreateAuthTokenJsonCreation createAuthTokenJsonCreation = new CreateAuthTokenJsonCreation();
+        String createAuthTokenJson = gson.toJson(createAuthTokenJsonCreation.mapCreateAuthToken(username, password));
+        BASE_LOGGER.info("Generated post Request: " + createAuthTokenJson);
+        String authEndPoint = "/auth";
+        createTokenResponse = bookingApiService.createBookingService(authEndPoint, createAuthTokenJson);
+        BASE_LOGGER.info("Generated response: " + createTokenResponse.asString());
+        token = createTokenResponse.getBody().jsonPath().getString("token");
+        softAssert.assertEquals(createTokenResponse.statusCode(), 200,
+                "Status code is not matching");
+        BASE_LOGGER.info("The status code is: " + createTokenResponse.statusCode());
+        softAssert.assertAll();
+    }
+
+    @Test(description = "To verify, update created booking API response", priority = 11)
+    public void testUpdateBookingApiResponse() throws Exception{
+        bookingApiService = new BookingApiService();
+        softAssert = new SoftAssert();
+        gson = new GsonBuilder().setPrettyPrinting().create();
+        createBookingJsonCreation = new CreateBookingJsonCreation();
+        bookingDatesJsonCreation = new BookingDatesJsonCreation();
+
+        BookingDates bookingDates = bookingDatesJsonCreation
+                .mapBookingDates(updatedCheckInDate,updatedCheckOutDate);
+
+        String updateBookingJson = gson.toJson(createBookingJsonCreation
+                .mapCreateBooking(updatedFirstName, updatedLastName,
+                        updatedTotalPrice, depositPaidFalse, bookingDates, updatedAdditionalNeeds));
+        BASE_LOGGER.info("Generated updated booking JSON: " + updateBookingJson);
+        updateBookingResponse = bookingApiService.updateBookingService(BOOKING_API + "/" +  jsonBookingId,
+                updateBookingJson, token);
+
+        softAssert.assertEquals(updateBookingResponse.statusCode(), 200,
+                "The status code is not matching");
+        BASE_LOGGER.info("The status code is: " + updateBookingResponse.statusCode());
+        BASE_LOGGER.info("The response is: " + updateBookingResponse.asString());
         softAssert.assertAll();
     }
 }

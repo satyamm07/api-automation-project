@@ -40,4 +40,16 @@ public class BookingApiService extends BaseClass {
             throw new Exception("--- Exception occurred while getting the response ---");
         }
     }
+
+    public Response updateBookingService(String request, String payload, String cookie) throws Exception {
+        BASE_LOGGER.info("Update booking details API endpoint: "
+                + configProperties.getProperty("baseUrl") + request);
+        Response updateBookingResponse = apiUtils.putRequest(configProperties.getProperty("baseUrl") + request,
+                payload, cookie);
+        if (updateBookingResponse != null) {
+            return updateBookingResponse;
+        } else {
+            throw new Exception("--- Exception occurred while updating the booking ---");
+        }
+    }
 }

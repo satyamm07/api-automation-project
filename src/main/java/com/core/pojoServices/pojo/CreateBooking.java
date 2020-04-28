@@ -1,4 +1,4 @@
-package com.core.pojoServices;
+package com.core.pojoServices.pojo;
 
 public class CreateBooking {
 

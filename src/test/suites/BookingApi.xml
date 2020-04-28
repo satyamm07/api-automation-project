@@ -15,9 +15,10 @@
                     <include name="testStatusResponseOfCreateBookingApi"/>
                     <include name="testStatusResponseOfGetBookingsApi"/>
                     <include name="testStatusResponseOfGetBookingsWithInvalidIdApi"/>
+                    <include name="testCreateTokenApi"/>
+                    <include name="testUpdateBookingApiResponse"/>
                 </methods>
             </class>
-
         </classes>
     </test>
 </suite>

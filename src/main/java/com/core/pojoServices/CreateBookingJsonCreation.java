@@ -1,7 +1,7 @@
-package com.core.apiServices;
+package com.core.pojoServices;
 
-import com.core.pojoServices.BookingDates;
-import com.core.pojoServices.CreateBooking;
+import com.core.pojoServices.pojo.BookingDates;
+import com.core.pojoServices.pojo.CreateBooking;
 
 public class CreateBookingJsonCreation {
 
