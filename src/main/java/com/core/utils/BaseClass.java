@@ -1,5 +1,7 @@
 package com.core.utils;
 
+import org.testng.asserts.SoftAssert;
+
 import java.io.FileInputStream;
 import java.util.Properties;
 
@@ -9,6 +11,7 @@ import java.util.Properties;
 public class BaseClass {
 
     public static Properties prop;
+    public SoftAssert softAssert = new SoftAssert();
 
     public Properties loadProperties() throws Exception{
 

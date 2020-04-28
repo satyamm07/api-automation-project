@@ -17,18 +17,26 @@ public class BookingApiService extends BaseClass {
         configProperties = loadProperties();
     }
 
-    public Response getBookingDetailsWithIdService(String request, String id) throws Exception {
-        String bookingId = "/" + id;
+    public Response createBookingService(String request, String payload) throws Exception {
+//        System.out.println(configProperties.getProperty("baseUrl") + request, payload);
+        Response createBookingResponse = apiUtils
+                .postRequest(configProperties.getProperty("baseUrl") + request, payload);
+        if (createBookingResponse != null) {
+            return createBookingResponse;
+        } else {
+            throw new Exception("--- Exception occurred while creating the booking ---");
+        }
+    }
+
+    public Response getBookingDetailsWithIdService(String request) throws Exception {
         BASE_LOGGER.error("Get booking details API endpoint"
-                + configProperties.getProperty("baseUrl") + request + bookingId);
+                + configProperties.getProperty("baseUrl") + request);
         Response getBookingDetailsWithIdResponse = apiUtils
-                .getRequest(configProperties.getProperty("baseUrl") + request + bookingId);
+                .getRequest(configProperties.getProperty("baseUrl") + request);
         if (getBookingDetailsWithIdResponse != null) {
             return getBookingDetailsWithIdResponse;
         } else {
             throw new Exception("--- Exception occurred while getting the response ---");
         }
     }
-
-
 }

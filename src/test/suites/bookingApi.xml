@@ -1,8 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="Test1">
+
+<suite name="Booking API Test" thread-count="1">
     <test name="API Test class">
         <classes>
-            <class name="com.test.BookingApiTest"/>
+            <class name="com.test.BookingApiTest">
+                <methods>
+                    <include name="testCreateBooking"/>
+                    <include name="testVerifyCreateBookingResponse"/>
+                    <include name="getBookingWithIdResponse"/>
+                    <include name="testJsonBookingApiResponse"/>
+                    <include name="testGetBookingApiResponseWithNameQueryParam"/>
+                    <include name="testBookingApiJsonResponseWithQueryParam"/>
+                    <include name="testGetBookingApiResponseWithDatesQueryParam"/>
+                </methods>
+            </class>
+
         </classes>
     </test>
 </suite>
