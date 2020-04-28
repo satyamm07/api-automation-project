@@ -3,6 +3,9 @@ package com.core.utils;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+/**
+ * @author Satyam
+ */
 public class BaseClass {
 
     public static Properties prop;

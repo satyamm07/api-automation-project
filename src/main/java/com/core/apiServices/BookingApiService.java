@@ -13,7 +13,6 @@ public class BookingApiService extends BaseClass {
     ApiUtils apiUtils = new ApiUtils();
     private final Logger BASE_LOGGER = Logger.getLogger(ApiUtils.class);
 
-
     public BookingApiService() throws Exception {
         configProperties = loadProperties();
     }
