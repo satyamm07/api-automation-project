@@ -52,4 +52,16 @@ public class BookingApiService extends BaseClass {
             throw new Exception("--- Exception occurred while updating the booking ---");
         }
     }
+
+    public Response updatePartialBookingService(String request, String payload, String cookie) throws Exception {
+        BASE_LOGGER.info("Update partial booking details API endpoint: "
+                + configProperties.getProperty("baseUrl") + request);
+        Response updatePartialBookingResponse = apiUtils.patchRequest(configProperties.getProperty("baseUrl") + request,
+                payload, cookie);
+        if (updatePartialBookingResponse != null) {
+            return updatePartialBookingResponse;
+        } else {
+            throw new Exception("--- Exception occurred while updating the booking ---");
+        }
+    }
 }

@@ -4,6 +4,7 @@ import com.core.apiServices.BookingApiService;
 import com.core.pojoServices.BookingDatesJsonCreation;
 import com.core.pojoServices.CreateAuthTokenJsonCreation;
 import com.core.pojoServices.CreateBookingJsonCreation;
+import com.core.pojoServices.UpdatePartialBookingJsonCreation;
 import com.core.pojoServices.pojo.BookingDates;
 import com.core.utils.BaseClass;
 import com.core.utils.IEndPoints;
@@ -28,6 +29,13 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
     private Response createBookingResponse;
     private Response updateBookingResponse;
     private Response createTokenResponse;
+    private BookingDates bookingDates;
+    private String updateBookingJson;
+    private Response updatePartialBookingResponse;
+    private UpdatePartialBookingJsonCreation updatePartialBookingJsonCreation;
+    private String updatePartialJsonString;
+    private int jsonBookingId;
+    private String token;
 
     //Create Booking Details
     private final String firstName = "Satyam";
@@ -41,6 +49,7 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
     private final String unregisteredFirstName = "TestUSer";
     private final String invalidBookingId = "77abc$%!";
     private final String notFoundMessage = "Not Found";
+    private final String badRequestMessage = "Bad Request";
 
     //Create Auth token details
     private final String username = "admin";
@@ -53,9 +62,6 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
     private final String updatedCheckInDate = "2020-04-29";
     private final String updatedCheckOutDate = "2020-04-20";
     private final String updatedAdditionalNeeds = "Lunch";
-
-    private int jsonBookingId;
-    private String token;
 
     public BookingApiTest() {
         BasicConfigurator.configure();
@@ -87,8 +93,8 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
         softAssert.assertAll();
     }
 
-    @Test(description = "To verify, the booking details after creating the ", priority = 1)
-    public void testVerifyCreateBookingResponse() {
+    @Test(description = "To verify, the booking details after creating the booking", priority = 1)
+    public void testCreateBookingApiResponse() {
         softAssert = new SoftAssert();
 
         String createdFirstName = createBookingResponse.getBody().jsonPath().getString("booking.firstname");
@@ -118,7 +124,7 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
     }
 
     @Test(description = "To verify, Get Booking details with Id API response", priority = 2)
-    public void getBookingWithIdResponse() throws Exception{
+    public void getBookingDetailsWithIdResponse() throws Exception{
         bookingApiService = new BookingApiService();
         softAssert = new SoftAssert();
         String bookingId = "/" + jsonBookingId;
@@ -135,7 +141,7 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
     }
 
     @Test(description = "To verify, the booking details after creating the ", priority = 3)
-    public void testJsonBookingApiResponse() {
+    public void testBookingApiJsonResponse() {
         softAssert = new SoftAssert();
 
         String jsonFirstName = getBookingDetailsResponse.getBody().jsonPath().getString("firstname");
@@ -185,7 +191,7 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
     }
 
     @Test(description = "To verify, Booking API json after passing the query parameters", priority = 5)
-    public void testBookingApiJsonResponseWithQueryParam() {
+    public void testBookingApiJsonResponseWithNameQueryParam() {
         softAssert = new SoftAssert();
 
         List<Integer> bookingId = getBookingDetailsResponse.getBody().jsonPath().getList("bookingid");
@@ -212,29 +218,32 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
         BASE_LOGGER.info("Verified the status code from the response and it is: "
                 + getBookingDetailsResponse.statusCode());
 
-        testBookingApiJsonResponseWithQueryParam();
+        testBookingApiJsonResponseWithNameQueryParam();
         softAssert.assertAll();
     }
 
-    @Test(description = "To verify the status response of the create booking api after not passing " +
+    @Test(description = "To verify the response status of the create booking api after not passing " +
             "the request body", priority = 7)
-    public void testStatusResponseOfCreateBookingApi() throws Exception{
+    public void testResponseStatusOfCreateBookingApi() throws Exception{
         bookingApiService = new BookingApiService();
         softAssert = new SoftAssert();
+
         createBookingResponse = bookingApiService.createBookingService(BOOKING_API, "");
+
         softAssert.assertEquals(createBookingResponse.statusCode(), 500,
                 "Status code is not matching");
         softAssert.assertAll();
     }
 
-    @Test(description = "To verify the response of the get bookings api after passing " +
+    @Test(description = "To verify the response status of the get bookings api after passing " +
             "the unregistered booking details", priority = 8)
-    public void testStatusResponseOfGetBookingsApi() throws Exception{
+    public void testResponseStatusOfGetBookingsApi() throws Exception{
         bookingApiService = new BookingApiService();
         softAssert = new SoftAssert();
 
         String apiParameters = "?firstname=" + unregisteredFirstName + "&lastname=" + lastName;
         getBookingDetailsResponse = bookingApiService.getBookingDetailsWithIdService(BOOKING_API + apiParameters);
+
         softAssert.assertEquals(getBookingDetailsResponse.statusCode(), 200,
                 "Status code is not matching");
         softAssert.assertEquals("[]","[]", "Response is not matching");
@@ -242,9 +251,9 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
         softAssert.assertAll();
     }
 
-    @Test(description = "To verify the response of the get bookings api after passing the booking ID"
-            , priority = 9)
-    public void testStatusResponseOfGetBookingsWithInvalidIdApi() throws Exception{
+    @Test(description = "To verify the response status of the get bookings api after passing the booking ID",
+            priority = 9)
+    public void testResponseStatusOfGetBookingsApiWithInvalidId() throws Exception{
         bookingApiService = new BookingApiService();
         softAssert = new SoftAssert();
 
@@ -284,10 +293,10 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
         createBookingJsonCreation = new CreateBookingJsonCreation();
         bookingDatesJsonCreation = new BookingDatesJsonCreation();
 
-        BookingDates bookingDates = bookingDatesJsonCreation
+        bookingDates = bookingDatesJsonCreation
                 .mapBookingDates(updatedCheckInDate,updatedCheckOutDate);
 
-        String updateBookingJson = gson.toJson(createBookingJsonCreation
+        updateBookingJson = gson.toJson(createBookingJsonCreation
                 .mapCreateBooking(updatedFirstName, updatedLastName,
                         updatedTotalPrice, depositPaidFalse, bookingDates, updatedAdditionalNeeds));
         BASE_LOGGER.info("Generated updated booking JSON: " + updateBookingJson);
@@ -300,4 +309,123 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
         BASE_LOGGER.info("The response is: " + updateBookingResponse.asString());
         softAssert.assertAll();
     }
+
+    @Test(description = "To verify, the updated booking details after updating the booking", priority = 12)
+    public void testUpdateBookingApiJsonResponse() {
+        softAssert = new SoftAssert();
+
+        String jsonFirstName = updateBookingResponse.getBody().jsonPath().getString("firstname");
+        String jsonLastName = updateBookingResponse.getBody().jsonPath().getString("lastname");
+        int jsonTotalPrice = updateBookingResponse.getBody().jsonPath().getInt("totalprice");
+        boolean jsonDepositPaidValue = updateBookingResponse.getBody().jsonPath().getBoolean("depositpaid");
+        String jsonCheckInDate = updateBookingResponse.getBody().jsonPath().getString("bookingdates.checkin");
+        String jsonCheckOutDate = updateBookingResponse.getBody().jsonPath().getString("bookingdates.checkout");
+        String jsonAdditionalNeeds = updateBookingResponse.getBody().jsonPath().getString("additionalneeds");
+
+        softAssert.assertEquals(jsonFirstName, updatedFirstName,
+                "json First Name is not matching");
+        softAssert.assertEquals(jsonLastName, updatedLastName,
+                "json last Name is not matching");
+        softAssert.assertEquals(jsonTotalPrice, updatedTotalPrice,
+                "json Total price is not matching");
+        softAssert.assertEquals(jsonDepositPaidValue, depositPaidFalse,
+                "json deposit value is not matching");
+        softAssert.assertEquals(jsonCheckInDate, updatedCheckInDate,
+                "json check in date is not matching");
+        softAssert.assertEquals(jsonCheckOutDate, updatedCheckOutDate,
+                "json check out date is not matching");
+        softAssert.assertEquals(jsonAdditionalNeeds, updatedAdditionalNeeds,
+                "json additional needs is not matching");
+
+        softAssert.assertAll();
+    }
+
+    @Test(description = "To verify the update API without passing the token", priority = 13)
+    public void testUpdateBookingApiResponseWithoutToken() throws Exception{
+        softAssert = new SoftAssert();
+        bookingApiService = new BookingApiService();
+
+        updateBookingResponse = bookingApiService.updateBookingService(BOOKING_API + "/" +  jsonBookingId,
+                updateBookingJson, "");
+
+        softAssert.assertEquals(updateBookingResponse.statusCode(), 403,
+                "The status code is not matching");
+        BASE_LOGGER.info("The status code is: " + updateBookingResponse.statusCode());
+        softAssert.assertEquals(updateBookingResponse.asString(), "Forbidden",
+                "Error code is not matching");
+        BASE_LOGGER.info("The response is: " + updateBookingResponse.asString());
+        softAssert.assertAll();
+    }
+
+    @Test(description = "To verify update booking with a partial payload", priority = 14)
+    public void testUpdatePartialBookingApi() throws Exception {
+        softAssert = new SoftAssert();
+        bookingApiService = new BookingApiService();
+        updatePartialBookingJsonCreation = new UpdatePartialBookingJsonCreation();
+        gson = new GsonBuilder().setPrettyPrinting().create();
+
+        updatePartialJsonString = gson
+                .toJson(updatePartialBookingJsonCreation.mapUpdatePartialBooking(firstName, lastName));
+
+        BASE_LOGGER.info("Generated updated partial booking JSON: " + updatePartialJsonString);
+        updatePartialBookingResponse = bookingApiService.updatePartialBookingService(BOOKING_API + "/"
+                + jsonBookingId, updatePartialJsonString, token);
+
+        softAssert.assertEquals(updatePartialBookingResponse.statusCode(), 200,
+                "The status code is not matching");
+        BASE_LOGGER.info("The status code is: " + updatePartialBookingResponse.statusCode());
+        BASE_LOGGER.info("The response is: " + updatePartialBookingResponse.asString());
+
+        softAssert.assertAll();
+    }
+
+    @Test(description = "To verify, the updated booking details after updating the booking", priority = 15)
+    public void testUpdatePartialBookingApiJsonResponse() {
+        softAssert = new SoftAssert();
+
+        String jsonFirstName = updatePartialBookingResponse.getBody().jsonPath().getString("firstname");
+        String jsonLastName = updatePartialBookingResponse.getBody().jsonPath().getString("lastname");
+        int jsonTotalPrice = updatePartialBookingResponse.getBody().jsonPath().getInt("totalprice");
+        boolean jsonDepositPaidValue = updatePartialBookingResponse.getBody().jsonPath().getBoolean("depositpaid");
+        String jsonCheckInDate = updatePartialBookingResponse.getBody().jsonPath().getString("bookingdates.checkin");
+        String jsonCheckOutDate = updatePartialBookingResponse.getBody().jsonPath().getString("bookingdates.checkout");
+        String jsonAdditionalNeeds = updatePartialBookingResponse.getBody().jsonPath().getString("additionalneeds");
+
+        softAssert.assertEquals(jsonFirstName, firstName,
+                "json First Name is not matching");
+        softAssert.assertEquals(jsonLastName, lastName,
+                "json last Name is not matching");
+        softAssert.assertEquals(jsonTotalPrice, updatedTotalPrice,
+                "json Total price is not matching");
+        softAssert.assertEquals(jsonDepositPaidValue, depositPaidFalse,
+                "json deposit value is not matching");
+        softAssert.assertEquals(jsonCheckInDate, updatedCheckInDate,
+                "json check in date is not matching");
+        softAssert.assertEquals(jsonCheckOutDate, updatedCheckOutDate,
+                "json check out date is not matching");
+        softAssert.assertEquals(jsonAdditionalNeeds, updatedAdditionalNeeds,
+                "json additional needs is not matching");
+
+        softAssert.assertAll();
+    }
+
+    @Test(description = "To verify the update API response without proper body", priority = 16)
+    public void testUpdateBookingApiWithoutProperBody() throws Exception {
+        softAssert = new SoftAssert();
+        bookingApiService = new BookingApiService();
+
+        updateBookingResponse = bookingApiService.updateBookingService(BOOKING_API + "/" +  jsonBookingId,
+                updatePartialJsonString, token);
+
+        softAssert.assertEquals(updateBookingResponse.statusCode(), 400,
+                "The status code is not matching");
+        BASE_LOGGER.info("The status code is: " + updateBookingResponse.statusCode());
+        softAssert.assertEquals(updateBookingResponse.asString(), badRequestMessage,
+                "Error code is not matching");
+        BASE_LOGGER.info("The response is: " + updateBookingResponse.asString());
+
+        softAssert.assertAll();
+    }
+
+
 }

@@ -69,9 +69,9 @@ public class ApiUtils {
     public Response patchRequest(String request, String payload, String cookie) {
         Response response = given()
                 .contentType("application/json")
-                .cookie(cookie)
-                .body(request)
-                .patch(payload);
+                .cookie("token", cookie)
+                .body(payload)
+                .patch(request);
         if(null != response) {
             BASE_LOGGER.info("---Successfully Received the response ---");
         }

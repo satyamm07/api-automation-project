@@ -7,18 +7,24 @@
             <class name="com.test.BookingApiTest">
                 <methods>
                     <include name="testCreateBooking"/>
-                    <include name="testVerifyCreateBookingResponse"/>
-                    <include name="getBookingWithIdResponse"/>
-                    <include name="testJsonBookingApiResponse"/>
+                    <include name="testCreateBookingApiResponse"/>
+                    <include name="getBookingDetailsWithIdResponse"/>
+                    <include name="testBookingApiJsonResponse"/>
                     <include name="testGetBookingApiResponseWithNameQueryParam"/>
-                    <include name="testBookingApiJsonResponseWithQueryParam"/>
-                    <include name="testStatusResponseOfCreateBookingApi"/>
-                    <include name="testStatusResponseOfGetBookingsApi"/>
-                    <include name="testStatusResponseOfGetBookingsWithInvalidIdApi"/>
+                    <include name="testBookingApiJsonResponseWithNameQueryParam"/>
+                    <include name="testResponseStatusOfCreateBookingApi"/>
+                    <include name="testResponseStatusOfGetBookingsApi"/>
+                    <include name="testResponseStatusOfGetBookingsApiWithInvalidId"/>
                     <include name="testCreateTokenApi"/>
                     <include name="testUpdateBookingApiResponse"/>
+                    <include name="testUpdateBookingApiJsonResponse"/>
+                    <include name="testUpdateBookingApiResponseWithoutToken"/>
+                    <include name="testUpdatePartialBookingApi"/>
+                    <include name="testUpdatePartialBookingApiJsonResponse"/>
+                    <include name="testUpdateBookingApiWithoutProperBody"/>
                 </methods>
             </class>
+
         </classes>
     </test>
 </suite>
