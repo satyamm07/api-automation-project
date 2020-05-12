@@ -426,6 +426,4 @@ public class BookingApiTest extends BaseClass implements IEndPoints {
 
         softAssert.assertAll();
     }
-
-
 }
